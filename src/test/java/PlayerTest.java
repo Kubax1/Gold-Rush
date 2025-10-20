@@ -18,7 +18,11 @@ class PlayerTest {
     @Test
     void new_PlayerToken_is_placed_on_the_board() {
         Board.Coords pos = token.pos();
+        System.out.println("PlayerToken object: " + token);
+        System.out.println("Position: col=" + pos.col() + ", row=" + pos.row());
+        System.out.println("Token on board: " + board.peekToken(pos.col(), pos.row()));
         Assertions.assertEquals(token, board.peekToken(pos.col(), pos.row()));
+
     }
 
     @Test
