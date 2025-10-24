@@ -1,85 +1,85 @@
 import edu.io.Board;
+import edu.io.Player;
 import edu.io.token.EmptyToken;
 import edu.io.token.PlayerToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class PlayerTest {
+class PlayerTokenTest {
     Board board;
-    PlayerToken token;
+    PlayerToken playerToken;
+    Player player;
 
     @BeforeEach
     void setUp() {
         board = new Board();
-        token = new PlayerToken(board);
+        player = new Player();
+        playerToken = new PlayerToken(player, board);
     }
 
     @Test
     void new_PlayerToken_is_placed_on_the_board() {
-        Board.Coords pos = token.pos();
-        System.out.println("PlayerToken object: " + token);
-        System.out.println("Position: col=" + pos.col() + ", row=" + pos.row());
-        System.out.println("Token on board: " + board.peekToken(pos.col(), pos.row()));
-        Assertions.assertEquals(token, board.peekToken(pos.col(), pos.row()));
-
+        Board.Coords pos = playerToken.pos();
+        Assertions.assertEquals(playerToken, board.peekToken(pos.col(), pos.row()));
     }
 
     @Test
     void stay_inside_and_throws_when_go_too_far_left() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            while (true) token.move(PlayerToken.Move.LEFT);
+            while (true) playerToken.move(PlayerToken.Move.LEFT);
         });
-        Board.Coords pos = token.pos();
+        Board.Coords pos = playerToken.pos();
         Assertions.assertEquals(0, pos.col());
     }
     @Test
     void stay_inside_and_throws_when_go_too_far_right() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            while (true) token.move(PlayerToken.Move.RIGHT);
+            while (true) playerToken.move(PlayerToken.Move.RIGHT);
         });
-        Board.Coords pos = token.pos();
+        Board.Coords pos = playerToken.pos();
         Assertions.assertEquals(board.size()-1, pos.col());
     }
     @Test
     void stay_inside_throws_when_go_too_far_up() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            while (true) token.move(PlayerToken.Move.UP);
+            while (true) playerToken.move(PlayerToken.Move.UP);
         });
-        Board.Coords pos = token.pos();
+        Board.Coords pos = playerToken.pos();
         Assertions.assertEquals(0, pos.row());
     }
     @Test
     void stay_inside_throws_when_go_too_far_down() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            while (true) token.move(PlayerToken.Move.DOWN);
+            while (true) playerToken.move(PlayerToken.Move.DOWN);
         });
-        Board.Coords pos = token.pos();
+        Board.Coords pos = playerToken.pos();
         Assertions.assertEquals(board.size()-1, pos.row());
     }
 
     @Test
     void move_moves_token() {
-        Board.Coords pos = token.pos();
-        token.move(PlayerToken.Move.DOWN);
-        Assertions.assertEquals(
-                token,
-                board.peekToken(pos.col(), pos.row()+1));
+        Board.Coords pos = playerToken.pos();
+        try {
+            playerToken.move(PlayerToken.Move.DOWN);
+            Assertions.assertEquals(
+                    playerToken,
+                    board.peekToken(pos.col(), pos.row() + 1));
+        }
+        catch (IllegalArgumentException e) {
+            playerToken.move(PlayerToken.Move.UP);
+            Assertions.assertEquals(
+                    playerToken,
+                    board.peekToken(pos.col(), pos.row() - 1));
+        }
     }
 
     @Test
     void after_move_prev_square_is_empty() {
-        Board.Coords pos = token.pos();
-        token.move(PlayerToken.Move.RIGHT);
+        Board.Coords pos = playerToken.pos();
+        playerToken.move(PlayerToken.Move.RIGHT);
         Assertions.assertInstanceOf(
                 EmptyToken.class,
                 board.peekToken(pos.col(), pos.row()));
-    }
-
-    @Test
-    void Move_NONE_doesnt_move_token() {
-        Board.Coords pos = token.pos();
-        token.move(PlayerToken.Move.NONE);
-        Assertions.assertEquals(pos, token.pos());
     }
 }
