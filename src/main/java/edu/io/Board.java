@@ -40,6 +40,16 @@ public class Board {
             System.out.println();
         }
     }
+    public Coords getAvailableSquare(){
+        for(int row=0;row<grid.length;row++){
+            for(int col=0;col<grid[row].length;col++){
+                if(grid[row][col] instanceof EmptyToken){
+                    return new Coords(col,row);
+                }
+            }
+        }
+        throw new IllegalStateException("Board is full");
+    }
     public record Coords(int col,int row){}
 
 }
